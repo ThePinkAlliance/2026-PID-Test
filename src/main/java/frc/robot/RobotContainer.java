@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.PivotArm;
+import frc.robot.commands.PivotArmPID;
 import frc.robot.subsystems.ArmSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -50,6 +51,13 @@ public class RobotContainer {
     m_driverController.b().whileTrue(
       new PivotArm(m_armSubsystem, () -> Constants.ArmSubsystemConstants.GetSafePivotSpeed(-Constants.ArmSubsystemConstants.ARM_MAX_OPERATION_SPEED_POWER), 
                                                                                           Constants.ArmSubsystemConstants.ARM_MAX_OPERATION_TIME_SECONDS)
+    );
+    m_driverController.x().onTrue(
+      m_armSubsystem.resetEncoder()
+    );
+
+    m_driverController.y().onTrue(
+      new PivotArmPID(m_armSubsystem, Constants.ArmSubsystemConstants.ARM_PIVOT_PID_SET_POINT_DEPLOYED)
     );
   }
 

@@ -27,15 +27,21 @@ public final class Constants {
       REVERSE
     }
     // Arm Subsystem Constants
-    public static final int ARM_CAN_ID = 22;
-    public static final int ARM_ENDSWITCH_DIO_ID = 5;
-    public static final int ARM_STARTSWITCH_DIO_ID = 6;
-    public static final int ARM_ENCODER_DIO_A = 7;
-    public static final int ARM_ENCODER_DIO_B = 8; 
+    public static final int ARM_CAN_ID = 21;
+    public static final int ARM_STARTSWITCH_DIO_ID = 2;
+    public static final int ARM_ENDSWITCH_DIO_ID = 3;
+    public static final int ARM_ENCODER_DIO_A = 0; 
+    public static final int ARM_ENCODER_DIO_B = 1;
     public static final int PIVOT_MOTOR_CURRENT_LIMIT = 60;
-    public static final double GOVERNOR_PERCENT = 0.2;
-    public static final double ARM_MAX_OPERATION_TIME_SECONDS = 1.0;
+    public static final double GOVERNOR_PERCENT = 0.3;
+    public static final double ARM_MAX_OPERATION_TIME_SECONDS = 10;
     public static final double ARM_MAX_OPERATION_SPEED_POWER = 0.5; // -1.0 to 1.0
+    public static final double ARM_PIVOT_PID_TOLERANCE = 5.0;
+    public static final double ARM_PIVOT_PID_MAX_OUTPUT = 0.4;
+    public static final double ARM_PIVOT_PID_MIN_OUTPUT = 0.1;
+    public static final double ARM_PIVOT_PID_SET_POINT_VERTICAL = 108.0;
+    public static final double ARM_PIVOT_PID_SET_POINT_DEPLOYED = 200.0;
+    
     // Returns a safe pivot speed based on a governor constant
     public static double GetSafePivotSpeed(double speed) {
       return speed * GOVERNOR_PERCENT;

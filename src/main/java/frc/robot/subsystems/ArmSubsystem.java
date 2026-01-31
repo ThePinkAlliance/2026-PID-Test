@@ -12,8 +12,11 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,13 +31,17 @@ public class ArmSubsystem extends SubsystemBase {
   private Encoder m_PivotEncoder;
   private SparkFlex m_PivotMotor;
   private SparkFlexConfig m_PivotConfig;
+  private PIDController m_PivotPID;
+  private double kP, kI, kD;
+
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
     // Setup components
     SetupMotors();
     SetupEncoders();
-    SetupSwitches();  
+    SetupSwitches(); 
+    SetupPIDController(); 
   }
 
   // Setup the motors
@@ -43,7 +50,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_PivotMotor = new SparkFlex(Constants.ArmSubsystemConstants.ARM_CAN_ID, MotorType.kBrushless);
     m_PivotConfig = new SparkFlexConfig();
     m_PivotConfig.idleMode(IdleMode.kBrake); // Coast or Brake
-    m_PivotConfig.inverted(false); // Inverted or Not
+    m_PivotConfig.inverted(true); // Inverted or Not
     m_PivotConfig.secondaryCurrentLimit(Constants.ArmSubsystemConstants.PIVOT_MOTOR_CURRENT_LIMIT);
     m_PivotMotor.configure(
     (SparkBaseConfig) m_PivotConfig,
@@ -54,6 +61,18 @@ public class ArmSubsystem extends SubsystemBase {
   // Setup the encoders
   private void SetupEncoders() {
     m_PivotEncoder = new Encoder(Constants.ArmSubsystemConstants.ARM_ENCODER_DIO_A, Constants.ArmSubsystemConstants.ARM_ENCODER_DIO_B);
+    m_PivotEncoder.setReverseDirection(true);
+    m_PivotEncoder.reset();
+  }
+
+  // Setup PID controller
+  private void SetupPIDController() {
+    // Sets PID coefficients for the Pivot neo
+    kP = 0.001;
+    kI = 0;
+    kD = 0;
+    m_PivotPID = new PIDController(kP, kI, kD);
+    m_PivotPID.setTolerance(Constants.ArmSubsystemConstants.ARM_PIVOT_PID_TOLERANCE);
   }
 
   // Setup the limit switches
@@ -64,7 +83,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   // Returns true if the arm is at the end position
   public boolean isArmAtEnd() {
-    return m_EndSwitch.get();
+    return !m_EndSwitch.get();
   }
 
   // Returns true if the arm is at the start position
@@ -73,8 +92,19 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   // Returns the current pivot tick/position from the encoder
-  public int getPivotAngle() {
+  // Encoder: 2048 ticks equals 1 revolution or 360 degrees
+  public double getPivotAngle() {
+    return m_PivotEncoder.get() * 0.176;
+  }
+
+  // Returns the current raw tick count from the encoder.  These are ticks from the last ZERO position
+  public double getPivotTicks() {
     return m_PivotEncoder.get();
+  }
+
+  // When called it resets encoder such that the current arm position becomes ZERO position
+  public void resetPivotEncoder() {
+    m_PivotEncoder.reset();
   }
 
   // Pivots the arm at the given speed
@@ -83,10 +113,27 @@ public class ArmSubsystem extends SubsystemBase {
     m_PivotMotor.set(governedSpeed);
   }
 
+  // Pivots based on requested setPoint
+  public void movePivotWithPID(double currentDistance, double setPoint) {
+    System.out.println("Current Distance: " + currentDistance);
+    m_PivotMotor.set(
+        MathUtil.clamp(
+            m_PivotPID.calculate(currentDistance, setPoint),
+            Constants.ArmSubsystemConstants.ARM_PIVOT_PID_MIN_OUTPUT,
+            Constants.ArmSubsystemConstants.ARM_PIVOT_PID_MAX_OUTPUT));
+  }
+
   // Returns a command that will pivot the arm at the given speed while scheduled
   public Command pivot(DoubleSupplier speed) {
     return new RunCommand(
       () -> this.pivot(speed.getAsDouble()),
+      this);
+  }
+
+  // Returns a command that will reset the encoder position to zero
+  public Command resetEncoder() {
+    return new RunCommand(
+      () -> this.resetPivotEncoder(),
       this);
   }
 
@@ -102,5 +149,9 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Arm Pivot Angle", getPivotAngle());
+    SmartDashboard.putNumber("Arm Pivot Ticks", getPivotTicks());
+    SmartDashboard.putBoolean("Arm at Start", isArmAtStart());
+    SmartDashboard.putBoolean("Arm at End", isArmAtEnd());
   }
 }
