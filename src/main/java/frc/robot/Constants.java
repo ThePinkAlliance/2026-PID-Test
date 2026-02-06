@@ -34,13 +34,14 @@ public final class Constants {
     public static final int ARM_ENCODER_DIO_B = 1;
     public static final int PIVOT_MOTOR_CURRENT_LIMIT = 60;
     public static final double GOVERNOR_PERCENT = 0.3;
-    public static final double ARM_MAX_OPERATION_TIME_SECONDS = 10;
+    public static final double ARM_MAX_OPERATION_TIME_SECONDS = 4;
     public static final double ARM_MAX_OPERATION_SPEED_POWER = 0.5; // -1.0 to 1.0
-    public static final double ARM_PIVOT_PID_TOLERANCE = 5.0;
-    public static final double ARM_PIVOT_PID_MAX_OUTPUT = 0.4;
-    public static final double ARM_PIVOT_PID_MIN_OUTPUT = 0.1;
-    public static final double ARM_PIVOT_PID_SET_POINT_VERTICAL = 108.0;
-    public static final double ARM_PIVOT_PID_SET_POINT_DEPLOYED = 200.0;
+    public static final double ARM_PIVOT_PID_TOLERANCE = 5;
+    public static final double ARM_PIVOT_PID_MAX_OUTPUT = 0.25;
+    public static final double ARM_PIVOT_PID_MIN_OUTPUT = -0.25;
+    public static final double ARM_PIVOT_PID_SET_POINT_VERTICAL = 600.0;
+    public static final double ARM_PIVOT_PID_SET_POINT_DEPLOYED = 1200.0;
+    public static final double ARM_PIVOT_PID_SET_POINT_STOWED = 0.0;
     
     // Returns a safe pivot speed based on a governor constant
     public static double GetSafePivotSpeed(double speed) {

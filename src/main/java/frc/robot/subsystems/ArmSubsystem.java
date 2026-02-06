@@ -11,7 +11,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
+import com.revrobotics.ResetMode;
+import com.revrobotics.PersistMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -54,8 +55,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_PivotConfig.secondaryCurrentLimit(Constants.ArmSubsystemConstants.PIVOT_MOTOR_CURRENT_LIMIT);
     m_PivotMotor.configure(
     (SparkBaseConfig) m_PivotConfig,
-    com.revrobotics.ResetMode.kResetSafeParameters,
-    com.revrobotics.PersistMode.kPersistParameters);
+    ResetMode.kResetSafeParameters,
+    PersistMode.kPersistParameters);
   }
 
   // Setup the encoders
@@ -123,6 +124,15 @@ public class ArmSubsystem extends SubsystemBase {
             Constants.ArmSubsystemConstants.ARM_PIVOT_PID_MAX_OUTPUT));
   }
 
+  // Pivot PID error
+  public double getPivotPIDError() {
+    return m_PivotPID.getError();
+  }
+
+  // Get PitvotPID at set point property
+  public boolean getPivotPIDAtSetpoint() {
+    return m_PivotPID.atSetpoint();
+  }
   // Returns a command that will pivot the arm at the given speed while scheduled
   public Command pivot(DoubleSupplier speed) {
     return new RunCommand(
