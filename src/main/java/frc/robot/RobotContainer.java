@@ -85,6 +85,10 @@ public class RobotContainer {
     m_driverController.povRight().onTrue(
       m_spinSubsystem.commandToAngle(Constants.SpinSubsystemConstants.SPIN_SERVO_MAX_ANGLE)
     );  
+
+    m_driverController.back().onTrue(
+      m_armSubsystem.resetIMU()
+    );
   }
 
   /**

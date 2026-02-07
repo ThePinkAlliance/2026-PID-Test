@@ -28,7 +28,7 @@ public final class Constants {
     }
     // Arm Subsystem Constants
     public static final int ARM_PIVOT_MOTOR_CAN_ID = 21;
-    public static final int ARM_IMU_CAN_ID = 1;
+    public static final int ARM_IMU_CAN_ID = 0;
     public static final int ARM_STARTSWITCH_DIO_ID = 2;
     public static final int ARM_ENDSWITCH_DIO_ID = 3;
     public static final int ARM_ENCODER_DIO_A = 0; 

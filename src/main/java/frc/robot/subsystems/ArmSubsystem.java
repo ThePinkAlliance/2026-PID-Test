@@ -158,13 +158,20 @@ public class ArmSubsystem extends SubsystemBase {
     return m_IMU.getRoll().getValueAsDouble();
   }
 
+  // Get acceleration on X axis
   public double getAccelerationX() {
     return m_IMU.getAccelerationX().getValueAsDouble();
   }
 
+  // Get gravity value on X axis
   public double getGravityX() {
     return m_IMU.getGravityVectorX().getValueAsDouble();  
   } 
+
+  // Rest the Arm's IMU
+  public void resetArmIMU() {
+    m_IMU.reset();
+  }
   
   // Returns a command that will pivot the arm at the given speed while scheduled
   public Command commandPivot(DoubleSupplier speed) {
@@ -187,6 +194,13 @@ public class ArmSubsystem extends SubsystemBase {
     } else {
       return DIRECTION.REVERSE;
     }
+  }
+
+  // Returns a command that will reset the IMU
+  public Command resetIMU() {
+    return new RunCommand(
+      () -> this.resetArmIMU(),
+      this);
   }
 
   @Override
