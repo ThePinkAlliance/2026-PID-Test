@@ -12,9 +12,12 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.ResetMode;
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.revrobotics.PersistMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,7 +37,7 @@ public class ArmSubsystem extends SubsystemBase {
   private SparkFlexConfig m_PivotConfig;
   private PIDController m_PivotPID;
   private double kP, kI, kD;
-
+  private Pigeon2 m_IMU;
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
@@ -43,12 +46,13 @@ public class ArmSubsystem extends SubsystemBase {
     SetupEncoders();
     SetupSwitches(); 
     SetupPIDController(); 
+    SetupIMU();
   }
 
   // Setup the motors
   private void SetupMotors() {
     // Pivot Motor Config
-    m_PivotMotor = new SparkFlex(Constants.ArmSubsystemConstants.ARM_CAN_ID, MotorType.kBrushless);
+    m_PivotMotor = new SparkFlex(Constants.ArmSubsystemConstants.ARM_PIVOT_MOTOR_CAN_ID, MotorType.kBrushless);
     m_PivotConfig = new SparkFlexConfig();
     m_PivotConfig.idleMode(IdleMode.kBrake); // Coast or Brake
     m_PivotConfig.inverted(true); // Inverted or Not
@@ -80,6 +84,13 @@ public class ArmSubsystem extends SubsystemBase {
   private void SetupSwitches() {
     m_EndSwitch = new DigitalInput(Constants.ArmSubsystemConstants.ARM_ENDSWITCH_DIO_ID);
     m_StartSwitch = new DigitalInput(Constants.ArmSubsystemConstants.ARM_STARTSWITCH_DIO_ID);
+  }
+
+  // Setup the IMU
+  private void SetupIMU() {
+    m_IMU = new Pigeon2(Constants.ArmSubsystemConstants.ARM_IMU_CAN_ID);
+    m_IMU.clearStickyFaults();
+    m_IMU.reset();
   }
 
   // Returns true if the arm is at the end position
@@ -133,6 +144,30 @@ public class ArmSubsystem extends SubsystemBase {
   public boolean getPivotPIDAtSetpoint() {
     return m_PivotPID.atSetpoint();
   }
+
+  // Get current IMU angle
+  public Double getIMUPitch() {
+    return m_IMU.getPitch().getValueAsDouble();
+  }
+
+  // Get current IMU Yaw
+  public double getIMUYaw() {
+    return m_IMU.getYaw().getValueAsDouble();
+  }
+
+  // Get current IMU Roll
+  public double getIMURoll() {
+    return m_IMU.getRoll().getValueAsDouble();
+  }
+
+  public double getAccelerationX() {
+    return m_IMU.getAccelerationX().getValueAsDouble();
+  }
+
+  public double getGravityX() {
+    return m_IMU.getGravityVectorX().getValueAsDouble();  
+  } 
+  
   // Returns a command that will pivot the arm at the given speed while scheduled
   public Command pivot(DoubleSupplier speed) {
     return new RunCommand(
@@ -163,5 +198,10 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Arm Pivot Ticks", getPivotTicks());
     SmartDashboard.putBoolean("Arm at Start", isArmAtStart());
     SmartDashboard.putBoolean("Arm at End", isArmAtEnd());
+    SmartDashboard.putNumber("Arm Yaw", getIMUYaw());
+    SmartDashboard.putNumber("Arm Roll", getIMURoll());
+    SmartDashboard.putNumber("Arm Pitch", getIMUPitch());
+    SmartDashboard.putNumber("Arm Acceleration X", getAccelerationX());
+    SmartDashboard.putNumber("Arm Gravity X", getGravityX()); 
   }
 }

@@ -46,12 +46,12 @@ public class RobotContainer {
     
     m_driverController.a().whileTrue(
       new PivotArm(m_armSubsystem, () -> Constants.ArmSubsystemConstants.GetSafePivotSpeed(Constants.ArmSubsystemConstants.ARM_MAX_OPERATION_SPEED_POWER), 
-                                                                                          Constants.ArmSubsystemConstants.ARM_MAX_OPERATION_TIME_SECONDS)
+      Constants.ArmSubsystemConstants.ARM_MAX_OPERATION_TIME_SECONDS)
     );
     
     m_driverController.b().whileTrue(
       new PivotArm(m_armSubsystem, () -> Constants.ArmSubsystemConstants.GetSafePivotSpeed(-Constants.ArmSubsystemConstants.ARM_MAX_OPERATION_SPEED_POWER), 
-                                                                                          Constants.ArmSubsystemConstants.ARM_MAX_OPERATION_TIME_SECONDS)
+      Constants.ArmSubsystemConstants.ARM_MAX_OPERATION_TIME_SECONDS)
     );
 
     m_driverController.start().onTrue(
