@@ -16,7 +16,7 @@ public class PivotArm extends Command {
   private ArmSubsystem armSubsystem;
   private DoubleSupplier speed;
   private double timeoutSeconds = 0;
-  Timer watchDogTimer;
+  private Timer watchDogTimer;
 
 
   /** Creates a new PivotArm. */

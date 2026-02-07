@@ -12,12 +12,10 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.ResetMode;
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.revrobotics.PersistMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -169,7 +167,7 @@ public class ArmSubsystem extends SubsystemBase {
   } 
   
   // Returns a command that will pivot the arm at the given speed while scheduled
-  public Command pivot(DoubleSupplier speed) {
+  public Command commandPivot(DoubleSupplier speed) {
     return new RunCommand(
       () -> this.pivot(speed.getAsDouble()),
       this);

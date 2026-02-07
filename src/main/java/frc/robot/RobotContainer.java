@@ -8,6 +8,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.PivotArm;
 import frc.robot.commands.PivotArmPID;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.SpinSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  private final SpinSubsystem m_spinSubsystem = new SpinSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -67,6 +69,22 @@ public class RobotContainer {
       new PivotArmPID(m_armSubsystem, Constants.ArmSubsystemConstants.ARM_PIVOT_PID_SET_POINT_STOWED,
       Constants.ArmSubsystemConstants.ARM_MAX_OPERATION_TIME_SECONDS)
     );
+
+    m_driverController.povDown().onTrue(
+      m_spinSubsystem.commandToPosition(Constants.SpinSubsystemConstants.SPIN_SERVO_MIN_POSITION)
+    );
+
+    m_driverController.povUp().onTrue(
+      m_spinSubsystem.commandToPosition(Constants.SpinSubsystemConstants.SPIN_SERVO_MAX_POSITION)
+    );
+
+    m_driverController.povLeft().onTrue(
+      m_spinSubsystem.commandToAngle(Constants.SpinSubsystemConstants.SPIN_SERVO_MIN_ANGLE)
+    );  
+
+    m_driverController.povRight().onTrue(
+      m_spinSubsystem.commandToAngle(Constants.SpinSubsystemConstants.SPIN_SERVO_MAX_ANGLE)
+    );  
   }
 
   /**

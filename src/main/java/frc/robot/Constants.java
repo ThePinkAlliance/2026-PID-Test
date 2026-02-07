@@ -50,4 +50,13 @@ public final class Constants {
     }
 
   }
+
+  public static class SpinSubsystemConstants {
+    public static final int SPIN_SERVO_PWM_ID = 0;
+    public static final double SPIN_SERVO_MIN_POSITION = 1.0; // Fully deployed position
+    public static final double SPIN_SERVO_MAX_POSITION = 0.0; // Fully stowed position
+    public static final double SPIN_SERVO_DEPLOYED_ANGLE = 90.0; // Angle corresponding to fully deployed position
+    public static final double SPIN_SERVO_MIN_ANGLE = 0.0; // Angle corresponding to fully stowed position
+    public static final double SPIN_SERVO_MAX_ANGLE = 180.0; // Maximum angle the servo can rotate to
+  }
 }
